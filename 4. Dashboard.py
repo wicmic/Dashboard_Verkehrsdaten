@@ -105,7 +105,7 @@ def scatter_plot(filtered_df):
     df_scatter = filtered_df.groupby(['Messstation', 'Datum']).agg({'Anzahl Fahrzeuge': 'sum', 'Sonnenstunden relativ': 'first'}).reset_index()
     scatter = px.scatter(df_scatter, x='Anzahl Fahrzeuge',
                          y='Sonnenstunden relativ',
-                         #color='Messstation',
+                         color='Messstation',
                          color_discrete_sequence= ['#015666', '#1a889d', '#4da3b3', '#80bdc9', '#b3d7de', '#cce5e9',  '#2b6b51', '#317a5c','#378a68','#50a381', '#77b89d', '#9eccb9'],
                          hover_data=['Datum'])
     scatter.update_layout(xaxis_title="Anzahl Fahrzeuge",
