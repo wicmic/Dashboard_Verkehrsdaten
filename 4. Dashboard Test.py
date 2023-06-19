@@ -137,7 +137,7 @@ def balken_linien_diagramm(filtered_df):
         y=df_balken_linien['Anzahl Fahrzeuge'],
         name='Anzahl Fahrzeuge',
         marker_color='#80bdc9',
-        yaxis='y'
+        yaxis='y',
     ))
 
     fig.add_trace(go.Scatter(
@@ -151,7 +151,13 @@ def balken_linien_diagramm(filtered_df):
 
     fig.update_layout(
         xaxis_title='Datum',
-        xaxis=dict(gridcolor='lightgray', zerolinecolor='black'),
+        #xaxis=dict(type='category', categoryorder='array', categoryarray=np.unique(df_balken_linien['Datum']), gridcolor='lightgray', zerolinecolor='black'),
+        xaxis=dict(
+            type='date',
+            tickformat='%Y-%m-%d',
+            tickangle=-45,
+            gridcolor='lightgray',
+            zerolinecolor='black'),
         yaxis=dict(title='Anzahl Fahrzeuge', color='#80bdc9', gridcolor='lightgray', zerolinecolor='black'),
         yaxis2=dict(title='Anteil Davos (%)', color='#015666', gridcolor='rgba(0,0,0,0)', zerolinecolor='black', overlaying='y', side='right', rangemode='tozero'),
         plot_bgcolor='white',

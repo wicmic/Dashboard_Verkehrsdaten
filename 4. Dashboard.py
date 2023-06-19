@@ -137,7 +137,7 @@ def balken_linien_diagramm(filtered_df):
         y=df_balken_linien['Anzahl Fahrzeuge'],
         name='Anzahl Fahrzeuge',
         marker_color='#80bdc9',
-        yaxis='y'
+        yaxis='y',
     ))
 
     fig.add_trace(go.Scatter(
@@ -151,7 +151,13 @@ def balken_linien_diagramm(filtered_df):
 
     fig.update_layout(
         xaxis_title='Datum',
-        xaxis=dict(gridcolor='lightgray', zerolinecolor='black'),
+        #xaxis=dict(type='category', categoryorder='array', categoryarray=np.unique(df_balken_linien['Datum']), gridcolor='lightgray', zerolinecolor='black'),
+        xaxis=dict(
+            type='date',
+            tickformat='%Y-%m-%d',
+            tickangle=-45,
+            gridcolor='lightgray',
+            zerolinecolor='black'),
         yaxis=dict(title='Anzahl Fahrzeuge', color='#80bdc9', gridcolor='lightgray', zerolinecolor='black'),
         yaxis2=dict(title='Anteil Davos (%)', color='#015666', gridcolor='rgba(0,0,0,0)', zerolinecolor='black', overlaying='y', side='right', rangemode='tozero'),
         plot_bgcolor='white',
@@ -284,50 +290,53 @@ app.layout = html.Div([
         id="loading",
         type="default",
         children=[
-            dbc.Row([
-                dbc.Col(
-                    dbc.Alert(
-                        "Messstationen: 025: Bad Ragaz (A13), Station 132: Landquart (A28), Station 228: Zizers (A13), Station 245: Sargans (A3), Station 318: Mels (A3), Station 373: Klosters (A28), Station 603: Walenstadt (A3), Station 708: Kueblis (A28), Station 828: Trübbach (A13)",
-                        color='#015666',
-                        style={'margin-top': '1px', 'margin-bottom': '10px', 'width': '100%'}
+            dbc.Row(
+                className='mt-3',
+                children=[
+                    dbc.Col(
+                        dbc.Alert(
+                            "Messstationen: 025: Bad Ragaz (A13), Station 132: Landquart (A28), Station 228: Zizers (A13), Station 245: Sargans (A3), Station 318: Mels (A3), Station 373: Klosters (A28), Station 603: Walenstadt (A3), Station 708: Kueblis (A28), Station 828: Trübbach (A13)",
+                            color='#015666',
+                            style={'margin-top': '1px', 'margin-bottom': '10px', 'width': '100%'}
+                        ),
+                        width=12
                     ),
-                    width=12
-                ),
 
-                dbc.Col([
-                    dcc.DatePickerRange(
-                        id='date-slider',
-                        min_date_allowed=df['Datum'].min(),
-                        max_date_allowed=df['Datum'].max(),
-                        start_date=df['Datum'].min(),
-                        end_date=df['Datum'].max(),
-                        display_format='YYYY-MM-DD',
-                        style={'height': '40px'}
-                    )
-                ], width=6, style={'height': '60px', 'background-color': '#cce5e9', 'width': '33%'}),
+                    dbc.Col([
+                        dcc.DatePickerRange(
+                            id='date-slider',
+                            min_date_allowed=df['Datum'].min(),
+                            max_date_allowed=df['Datum'].max(),
+                            start_date=df['Datum'].min(),
+                            end_date=df['Datum'].max(),
+                            display_format='YYYY-MM-DD',
+                            style={'height': '40px'}
+                        )
+                    ], width=6, style={'height': '60px', 'background-color': '#cce5e9', 'width': '33%'}),
 
-                dbc.Col([
-                    dcc.Dropdown(
-                        id='station-dropdown',
-                        options=[{'label': station, 'value': station} for station in df['Messstation'].unique()],
-                        value=[],
-                        multi=True,
-                        placeholder='Messstation auswählen',
-                        style={'height': '40px'}
-                    )
-                ], width=3, style={'height': '60px', 'background-color': '#cce5e9', 'width': '33%'}),#, 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' wieso funktioniert das nicht?
+                    dbc.Col([
+                        dcc.Dropdown(
+                            id='station-dropdown',
+                            options=[{'label': station, 'value': station} for station in df['Messstation'].unique()],
+                            value=[],
+                            multi=True,
+                            placeholder='Messstation auswählen',
+                            style={'height': '40px'}
+                        )
+                    ], width=3, style={'height': '60px', 'background-color': '#cce5e9', 'width': '33%'}),
 
-                dbc.Col([
-                    dcc.Dropdown(
-                        id='season-dropdown',
-                        options=[{'label': season, 'value': season} for season in df['Jahreszeit'].unique()],
-                        value=[],
-                        multi=True,
-                        placeholder='Jahreszeit auswählen',
-                        style={'height': '40px'}
-                    )
-                ], width=3, style={'height': '60px', 'background-color': '#cce5e9', 'width': '33%'}),
-            ]),
+                    dbc.Col([
+                        dcc.Dropdown(
+                            id='season-dropdown',
+                            options=[{'label': season, 'value': season} for season in df['Jahreszeit'].unique()],
+                            value=[],
+                            multi=True,
+                            placeholder='Jahreszeit auswählen',
+                            style={'height': '40px'}
+                        )
+                    ], width=3, style={'height': '60px', 'background-color': '#cce5e9', 'width': '33%'}),
+                ]
+            ),
 
             dbc.Row([
                 dbc.Col([
@@ -341,7 +350,6 @@ app.layout = html.Div([
                 dbc.Col([
                     dcc.Graph(id='gauge-chart-anz', style={'height': '300px', 'margin-top': '0px'}),
                 ], width={'size': 2}),
-
             ], style={'width': '100%'}),
 
             dbc.Row([
