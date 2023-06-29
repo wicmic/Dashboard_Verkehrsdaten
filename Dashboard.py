@@ -213,7 +213,7 @@ def grupp_balken_diagramm(filtered_df):
         xaxis_title='Datum',
         yaxis_title='Anzahl Fahrzeuge',
         barmode='group',
-        legend=dict(orientation="h", x=0, y=1.1),
+        legend=dict(orientation="h", x=0.4, y=1.1),
         plot_bgcolor='white',
         paper_bgcolor='white',
         font_color='black',
