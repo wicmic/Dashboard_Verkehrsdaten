@@ -145,7 +145,6 @@ def balken_linien_diagramm(filtered_df):
     #Umwandlung von Datumformat in String für die Darstellung von Kategorialen Daten
     df_balken_linien['Datum'] = (pd.to_datetime(df_balken_linien['Datum'].astype(str), format='%Y-%m-%d')).astype(str)
 
-
     fig = go.Figure()
 
     fig.add_trace(go.Bar(
@@ -225,7 +224,12 @@ def grupp_balken_diagramm(filtered_df):
     return fig
 
 def gauge_chart_corr(filtered_df):
-    correlation = filtered_df['Anzahl Fahrzeuge'].corr(filtered_df['Sonnenstunden relativ'])
+    anzahl_fahrzeuge = filtered_df['Anzahl Fahrzeuge']
+    sonnenstunden_relativ = filtered_df['Sonnenstunden relativ']
+
+    correlation = np.corrcoef(anzahl_fahrzeuge, sonnenstunden_relativ)[0, 1]
+
+
 
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
@@ -412,12 +416,12 @@ app.layout = html.Div([
                         clearable=False
                     ), width=2),
                     dbc.Col(),
-                    dbc.Col(dcc.Dropdown(
-                        id='dropdown-3',
-                        options=[{'label': station, 'value': station} for station in df['Messstation'].unique()],
-                        value='373', #Wert vordefiniert - allenfalls noch anpassen
-                        clearable=False
-                    ),width=2),
+                    #dbc.Col(dcc.Dropdown(
+                        #id='dropdown-3',
+                        #options=[{'label': station, 'value': station} for station in df['Messstation'].unique()],
+                        #value='373', #Wert vordefiniert - allenfalls noch anpassen
+                        #clearable=False
+                    #),width=2),
                     ],
 
                     # Vertikal Mitte der Reihe
@@ -482,11 +486,23 @@ def update_figures(start_date, end_date, stations, seasons):
 @app.callback(
     Output('grupp_balken_fig', 'figure'),
     Input('dropdown-1', 'value'),
-    Input('dropdown-2', 'value')
+    Input('dropdown-2', 'value'),
+    Input('date-slider', 'start_date'),
+    Input('date-slider', 'end_date'),
+    Input('season-dropdown', 'value')
 )
 
 def update_grupp_balken_fig(messstation_1, messstation_2):
+    min_date = pd.to_datetime(start_date)
+    max_date = pd.to_datetime(end_date)
+
     filtered_df = df[(df['Messstation'] == messstation_1) | (df['Messstation'] == messstation_2)]
+    filtered_df = filtered_df[(filtered_df['Datum'] >= min_date) & (filtered_df['Datum'] <= max_date)]
+
+    if seasons:
+        filtered_df = filtered_df[filtered_df['Jahreszeit'].isin(seasons)]
+
+
     grupp_balken_fig = grupp_balken_diagramm(filtered_df)
 
     return grupp_balken_fig
