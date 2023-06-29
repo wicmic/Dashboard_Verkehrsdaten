@@ -158,7 +158,7 @@ def balken_linien_diagramm(filtered_df):
     fig.add_trace(go.Scatter(
         x=df_balken_linien['Datum'],
         y=df_balken_linien['Anteil Davos (%)'],
-        name='Anteil Davos (%)',
+        name='Anteil Station 373 (in %)',
         mode='lines',
         line_color='#015666',
         yaxis='y2',
@@ -227,7 +227,7 @@ def gauge_chart_corr(filtered_df):
     anzahl_fahrzeuge = filtered_df['Anzahl Fahrzeuge']
     sonnenstunden_relativ = filtered_df['Sonnenstunden relativ']
 
-    correlation = np.corrcoef(anzahl_fahrzeuge, sonnenstunden_relativ)[0, 1]
+    correlation = np.corrcoef(anzahl_fahrzeuge, sonnenstunden_relativ)[0, 1].round(2)
 
 
 
@@ -260,7 +260,7 @@ def gauge_chart_anz(filtered_df):
     df_messstation_davos = filtered_df[filtered_df['Messstation'] == '373']
     df_messstation_davos_sum = df_messstation_davos['Anzahl Fahrzeuge'].sum()
     df_other_sum = filtered_df[filtered_df['Messstation'] != '373']['Anzahl Fahrzeuge'].sum()
-    proportion = round(df_messstation_davos_sum / (df_messstation_davos_sum + df_other_sum) * 100, 2)
+    proportion = (df_messstation_davos_sum / (df_messstation_davos_sum + df_other_sum) * 100).round(2)
 
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
@@ -413,7 +413,7 @@ app.layout = html.Div([
                     dbc.Col(),
                     dbc.Col(
                         dbc.Alert(
-                        "Stationen auswählen, um Grafiken anzupassen",
+                        "Stationen auswählen, um Grafik anzupassen",
                         color='#cce5e9',
                         style={'margin-top': '1px', 'margin-bottom': '10px', 'width': '100%', "text-align": "right"}
                     ),
@@ -423,26 +423,27 @@ app.layout = html.Div([
                         options=[{'label': station, 'value': station} for station in df['Messstation'].unique()],
                         value='25', #Wert vordefiniert - allenfalls noch anpassen
                         clearable=False
-                    ), width=2),
+                    ), width=1, align='right'),
                     dbc.Col(dcc.Dropdown(
                         id='dropdown-2',
                         options=[{'label': station, 'value': station} for station in df['Messstation'].unique()],
                         value='373', #Wert vordefiniert - allenfalls noch anpassen
                         clearable=False
-                    ), width=2),
+                    ), width=1, align='right'),
                     dbc.Col(),
                     #dbc.Col(dcc.Dropdown(
                         #id='dropdown-3',   #Dropdown für Gauge-Chart, damit Anteil der Station gewählt werden kann und nicht stationär ist
                         #options=[{'label': station, 'value': station} for station in df['Messstation'].unique()],
                         #value='373', #Wert vordefiniert - allenfalls noch anpassen
-                        #clearable=False
-                    #),width=2),
+                        #clearable=False,
+                    #), width=1, align='left'),
                     ],
 
                     # Vertikal Mitte der Reihe
                     align="center",
                     style={'height': '60px', 'background-color': '#cce5e9' }
                     ),
+
 
             dbc.Row([
                 dbc.Col([
