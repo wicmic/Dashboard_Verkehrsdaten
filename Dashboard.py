@@ -126,7 +126,7 @@ def scatter_plot(filtered_df):
                           paper_bgcolor='white',
                           font_color='black',
                           xaxis=dict(gridcolor='lightgray',zerolinecolor='black'),
-                          yaxis=dict(gridcolor='lightgray', zerolinecolor='black'),
+                          yaxis=dict(gridcolor='lightgray', zerolinecolor='black'), #range=[0, 100] für Fixierung der Achse prüfen, ob notwendig
                           legend=dict(orientation="h", x=0, y=1.1))
     return scatter
 
@@ -257,7 +257,7 @@ def gauge_chart_corr(filtered_df):
 
 
 def gauge_chart_anz(filtered_df):
-    df_messstation_davos = df[df['Messstation'] == '373']
+    df_messstation_davos = filtered_df[filtered_df['Messstation'] == '373']
     df_messstation_davos_sum = df_messstation_davos['Anzahl Fahrzeuge'].sum()
     df_other_sum = filtered_df[filtered_df['Messstation'] != '373']['Anzahl Fahrzeuge'].sum()
     proportion = round(df_messstation_davos_sum / (df_messstation_davos_sum + df_other_sum) * 100, 2)
@@ -312,7 +312,7 @@ server = app.server
 # LAYOUT SECTION: BOOTSTRAP
 #--------------------------------------------------------------------
 app.layout = html.Div([
-    html.H1("Verkehrsdaten nach Davos / Klosters"),
+    html.H1("Dashboard Verkehrsfluss Davos / Klosters und Bündnerland"),
 
     dcc.Loading(
         id="loading",
@@ -341,9 +341,24 @@ app.layout = html.Div([
                             display_format='YYYY-MM-DD'
                         )
                     ],
-                    width=6,
+                    width=2,
 
                 ),
+
+                dbc.Col(
+                    [
+                        html.Div(
+                            "Sonnenstunden in %",
+                            style = {"font-size": "10px", "text-align": "center"}),
+                    dcc.RangeSlider(id='sun-slider',
+                                        min=0,
+                                        max=100,
+                                        value=[0, 100],
+                                        updatemode = 'mouseup'),
+                    ],
+                    className='mt-1',
+                    width=4
+                    ),
 
                 dbc.Col(
                     [
@@ -398,9 +413,9 @@ app.layout = html.Div([
                     dbc.Col(),
                     dbc.Col(
                         dbc.Alert(
-                        "bitte auswählen, um Grafiken anzupassen",
+                        "Stationen auswählen, um Grafiken anzupassen",
                         color='#cce5e9',
-                        style={'margin-top': '1px', 'margin-bottom': '10px', 'width': '100%'}
+                        style={'margin-top': '1px', 'margin-bottom': '10px', 'width': '100%', "text-align": "right"}
                     ),
                     ),
                     dbc.Col(dcc.Dropdown(
@@ -417,7 +432,7 @@ app.layout = html.Div([
                     ), width=2),
                     dbc.Col(),
                     #dbc.Col(dcc.Dropdown(
-                        #id='dropdown-3',
+                        #id='dropdown-3',   #Dropdown für Gauge-Chart, damit Anteil der Station gewählt werden kann und nicht stationär ist
                         #options=[{'label': station, 'value': station} for station in df['Messstation'].unique()],
                         #value='373', #Wert vordefiniert - allenfalls noch anpassen
                         #clearable=False
@@ -458,15 +473,19 @@ app.layout = html.Div([
     Input('date-slider', 'start_date'),
     Input('date-slider', 'end_date'),
     Input('station-dropdown', 'value'),
-    Input('season-dropdown', 'value')
+    Input('season-dropdown', 'value'),
+    Input('sun-slider', 'value')
 )
 
 
-def update_figures(start_date, end_date, stations, seasons):
+def update_figures(start_date, end_date, stations, seasons, sun):
     min_date = pd.to_datetime(start_date)
     max_date = pd.to_datetime(end_date)
+    min_sun, max_sun = sun
 
     filtered_df = df[(df['Datum'] >= min_date) & (df['Datum'] <= max_date)]
+
+    filtered_df = filtered_df[filtered_df['Sonnenstunden relativ'].between(min_sun, max_sun)]
 
     if stations:
         filtered_df = filtered_df[filtered_df['Messstation'].isin(stations)]
@@ -489,15 +508,18 @@ def update_figures(start_date, end_date, stations, seasons):
     Input('dropdown-2', 'value'),
     Input('date-slider', 'start_date'),
     Input('date-slider', 'end_date'),
-    Input('season-dropdown', 'value')
+    Input('season-dropdown', 'value'),
+    Input('sun-slider', 'value')
 )
 
-def update_grupp_balken_fig(messstation_1, messstation_2, start_date, end_date, seasons):
+def update_grupp_balken_fig(messstation_1, messstation_2, start_date, end_date, seasons, sun):
     min_date = pd.to_datetime(start_date)
     max_date = pd.to_datetime(end_date)
+    min_sun, max_sun = sun
 
     filtered_df = df[(df['Messstation'] == messstation_1) | (df['Messstation'] == messstation_2)]
     filtered_df = filtered_df[(filtered_df['Datum'] >= min_date) & (filtered_df['Datum'] <= max_date)]
+    filtered_df = filtered_df[filtered_df['Sonnenstunden relativ'].between(min_sun, max_sun)]
 
     if seasons:
         filtered_df = filtered_df[filtered_df['Jahreszeit'].isin(seasons)]
