@@ -492,7 +492,7 @@ def update_figures(start_date, end_date, stations, seasons):
     Input('season-dropdown', 'value')
 )
 
-def update_grupp_balken_fig(messstation_1, messstation_2):
+def update_grupp_balken_fig(messstation_1, messstation_2, start_date, end_date, seasons):
     min_date = pd.to_datetime(start_date)
     max_date = pd.to_datetime(end_date)
 
