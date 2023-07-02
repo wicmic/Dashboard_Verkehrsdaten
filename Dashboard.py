@@ -312,7 +312,8 @@ server = app.server
 # LAYOUT SECTION: BOOTSTRAP
 #--------------------------------------------------------------------
 app.layout = html.Div([
-    html.H1("Dashboard Verkehrsfluss Davos / Klosters und Bündnerland"),
+    html.H1("Dashboard Verkehrsfluss Davos / Klosters und Bündnerland",
+    style = {'font-family': 'Arial', 'font-size': '34px', 'font-weight': 'bold', 'color': '#006276', 'background-color': '#cce5e9', 'height': '60px', 'border-radius': '5px', 'line-height': '55px'}),
 
     dcc.Loading(
         id="loading",
@@ -323,7 +324,7 @@ app.layout = html.Div([
                     dbc.Alert(
                         "Messstationen: 025: Bad Ragaz (A13), Station 132: Landquart (A28), Station 228: Zizers (A13), Station 245: Sargans (A3), Station 318: Mels (A3), Station 373: Klosters (A28), Station 603: Walenstadt (A3), Station 708: Kueblis (A28), Station 828: Trübbach (A13)",
                         color='#015666',
-                        style={'margin-top': '1px', 'margin-bottom': '10px', 'width': '100%'}
+                        style={'margin-top': '1px', 'margin-bottom': '6px', 'width': '100%'}
                     ),
                     width=12
                 ),
@@ -396,7 +397,7 @@ app.layout = html.Div([
 
             dbc.Row([
                 dbc.Col([
-                    dcc.Graph(id='scatter-plot', style={'height': '500px', 'margin-top': '0px'}),
+                    dcc.Graph(id='scatter-plot', style={'height': '500px', 'margin-top': '0px', 'margin-bottom': '15px'}),
                 ], width={'size': 5}),
 
                 dbc.Col([
@@ -404,7 +405,7 @@ app.layout = html.Div([
                 ], width={'size': 5}),
 
                 dbc.Col([
-                    dcc.Graph(id='gauge-chart-anz', style={'height': '300px', 'margin-top': '0px'}),
+                    dcc.Graph(id='gauge-chart-anz', style={'height': '300px', 'margin-top': '0px',}),
                 ], width={'size': 2}),
 
             ], style={'width': '100%'}),
@@ -460,7 +461,8 @@ app.layout = html.Div([
             ], style={'width': '100%'}),
         ]
     )
-])
+],
+)
 
 
 # Callback-Funktionen
