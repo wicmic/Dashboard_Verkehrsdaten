@@ -1,8 +1,3 @@
-# HELP AND CHEATSHEETS
-#-------------------------------------------------------------------
-#https://hackerthemes.com/bootstrap-cheatsheet/#mt-1
-#Bootstrap Themes: https://bootswatch.com/flatly/
-
 # IMPORT LIBRARIES
 #-------------------------------------------------------------------
 import pandas as pd
